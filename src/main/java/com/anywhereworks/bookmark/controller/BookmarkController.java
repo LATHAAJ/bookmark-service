@@ -28,6 +28,7 @@ public class BookmarkController {
 
   @GetMapping
   public ResponseEntity<List<BookmarkDto>> getAllBookMarks() {
+
     return ResponseEntity.ok(List.of());
   }
 

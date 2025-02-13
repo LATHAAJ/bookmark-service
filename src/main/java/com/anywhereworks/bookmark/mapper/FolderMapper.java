@@ -1,7 +1,7 @@
 package com.anywhereworks.bookmark.mapper;
 
 import com.anywhereworks.bookmark.dto.FolderDto;
-import com.anywhereworks.bookmark.entity.FolderEntity;
+import com.anywhereworks.bookmark.entity.Folder;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
@@ -10,8 +10,8 @@ import org.mapstruct.MappingTarget;
 public interface FolderMapper {
 
   @Mapping(target = "id", ignore = true)
-  FolderEntity toEntity(FolderDto folderDto);
+  Folder toEntity(FolderDto folderDto);
 
   @Mapping(target = "id", ignore = true)
-  void updateFromDto(FolderDto folderDto, @MappingTarget FolderEntity folder);
+  void updateFromDto(FolderDto folderDto, @MappingTarget Folder folder);
 }

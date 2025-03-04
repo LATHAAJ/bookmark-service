@@ -7,8 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 
 @Entity
 @Data
@@ -29,7 +28,7 @@ public class Bookmark {
 
   private String description;
 
-  private ZonedDateTime createdAt;
+  private LocalDateTime createdAt;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "folder_id", nullable = true)

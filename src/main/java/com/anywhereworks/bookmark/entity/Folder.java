@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class Folder {
 
+  private String id;
   private String name;
 
   private String folderId;

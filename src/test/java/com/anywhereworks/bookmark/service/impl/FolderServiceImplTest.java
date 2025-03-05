@@ -16,7 +16,7 @@ import static org.mockito.Mockito.*;
 
 public class FolderServiceImplTest {
   @Test
-  public void test_fetch_all_folders_returns_folder_list() {
+  public void fetchAll_folderslist() {
     FolderServiceImpl folderService = new FolderServiceImpl();
     FolderRepository folderRepository = mock(FolderRepository.class);
     ReflectionTestUtils.setField(folderService, "folderRepository", folderRepository);
@@ -30,7 +30,7 @@ public class FolderServiceImplTest {
     assertEquals(expectedFolders, actualFolders);
   }
   @Test
-  public void test_fetch_folder_by_valid_id_returns_folder() {
+  public void fetchFolderByValidId() {
     Long folderId = 1L;
     Folder expectedFolder = Folder.builder()
             .id("1")
@@ -49,7 +49,7 @@ public class FolderServiceImplTest {
     assertEquals(expectedFolder.getFolderId(), actualFolder.getFolderId());
   }
   @Test
-  public void test_create_folder_with_valid_dto() {
+  public void createFolderWithValid_dto() {
     // Given
     FolderServiceImpl folderService = new FolderServiceImpl();
     FolderRepository folderRepository = mock(FolderRepository.class);
@@ -76,7 +76,7 @@ public class FolderServiceImplTest {
   }
 
   @Test
-  public void test_delete_existing_folder_success() {
+  public void deleteExisting_Folder() {
     Long folderId = 1L;
     Folder mockFolder = new Folder();
 

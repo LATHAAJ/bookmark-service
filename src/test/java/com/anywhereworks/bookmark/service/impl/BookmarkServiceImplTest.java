@@ -31,7 +31,7 @@ public class BookmarkServiceImplTest {
     bookmarkService = new BookmarkServiceImpl();
   }
   @Test
-  public void test_fetch_all_bookmarks_returns_list_when_repository_has_bookmarks() {
+  public void fetchAllBookmarks() {
     BookmarkRepository bookmarkRepository = mock(BookmarkRepository.class);
     BookmarkServiceImpl bookmarkService = new BookmarkServiceImpl();
     ReflectionTestUtils.setField(bookmarkService, "bookmarkRepository", bookmarkRepository);
@@ -48,7 +48,7 @@ public class BookmarkServiceImplTest {
   }
 
   @Test
-  public void test_fetch_bookmark_by_id_returns_bookmark_when_valid_id() {
+  public void fetchBookmarkById() {
     Long bookmarkId = 1L;
     Bookmark expectedBookmark = Bookmark.builder()
             .id(bookmarkId)
@@ -68,7 +68,7 @@ public class BookmarkServiceImplTest {
   }
 
   @Test
-  public void test_delete_existing_bookmark_by_valid_id() {
+  public void deleteExistingBookmarkByValid_id() {
     Long bookmarkId = 1L;
     BookmarkRepository bookmarkRepository = mock(BookmarkRepository.class);
     BookmarkServiceImpl bookmarkService = new BookmarkServiceImpl();

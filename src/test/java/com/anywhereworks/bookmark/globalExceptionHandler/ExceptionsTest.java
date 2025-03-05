@@ -17,7 +17,7 @@ import static org.mockito.Mockito.when;
 
 public class ExceptionsTest {
   @Test
-  public void test_handle_entity_not_found_returns_not_found_status() {
+  public void handle_entityNotFound() {
     Exceptions exceptionHandler = new Exceptions();
     String errorMessage = "Entity not found";
     EntityNotFoundException exception = new EntityNotFoundException(errorMessage);
@@ -26,7 +26,7 @@ public class ExceptionsTest {
     assertEquals(errorMessage, response.getBody());
   }
   @Test
-  public void single_validation_error_returns_map_with_one_field_message_pair() {
+  public void single_validation_error() {
     Exceptions exceptionHandler = new Exceptions();
     MethodArgumentNotValidException ex = mock(MethodArgumentNotValidException.class);
     BindingResult bindingResult = mock(BindingResult.class);
@@ -41,7 +41,7 @@ public class ExceptionsTest {
   }
 
   @Test
-  public void test_generic_exception_returns_500_status() {
+  public void generic_exception_returns_500_status() {
     Exceptions exceptionHandler = new Exceptions();
     Exception testException = new RuntimeException("test error");
 
@@ -50,6 +50,5 @@ public class ExceptionsTest {
     assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
     assertEquals("An unexpected error occurred: test error", response.getBody());
   }
-
 
 }

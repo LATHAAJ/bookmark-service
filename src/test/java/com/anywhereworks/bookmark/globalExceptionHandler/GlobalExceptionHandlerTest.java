@@ -24,10 +24,8 @@ public class GlobalExceptionHandlerTest {
     assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     assertEquals(errorMessage, response.getBody());
   }
-  // Method correctly transforms MethodArgumentNotValidException into ValidationErrorResponse
   @Test
-  public void test_transforms_method_argument_not_valid_exception_into_validation_error_response() {
-    // Given
+  public void test_transforms_method_argument_not_valid_exception() {
     GlobalExceptionHandler exceptionHandler = new GlobalExceptionHandler();
 
     MethodArgumentNotValidException exception = mock(MethodArgumentNotValidException.class);
@@ -40,10 +38,8 @@ public class GlobalExceptionHandlerTest {
     when(fieldError.getField()).thenReturn("username");
     when(fieldError.getDefaultMessage()).thenReturn("must not be blank");
 
-    // When
     ResponseEntity<ValidationErrorResponse> response = exceptionHandler.handleValidationExceptions(exception);
 
-    // Then
     assertNotNull(response);
     assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
 

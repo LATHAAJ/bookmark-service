@@ -5,16 +5,16 @@ import com.anywhereworks.bookmark.mapper.BookmarkMapper;
 import com.anywhereworks.bookmark.repository.BookmarkRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.springframework.test.util.ReflectionTestUtils;
-import java.util.Arrays;
+import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 public class BookmarkServiceImplTest {
 
   private BookmarkServiceImpl bookmarkService;
@@ -27,56 +27,60 @@ public class BookmarkServiceImplTest {
 
   @BeforeEach
   void setUp() {
-    MockitoAnnotations.openMocks(this);
-    bookmarkService = new BookmarkServiceImpl();
+    bookmarkService = new BookmarkServiceImpl(bookmarkRepository, null, bookmarkMapper);
   }
-  @Test
-  public void fetchAllBookmarks() {
-    BookmarkRepository bookmarkRepository = mock(BookmarkRepository.class);
-    BookmarkServiceImpl bookmarkService = new BookmarkServiceImpl();
-    ReflectionTestUtils.setField(bookmarkService, "bookmarkRepository", bookmarkRepository);
 
-    List<Bookmark> expectedBookmarks = Arrays.asList(
+  @Test
+  void testFetchAllBookmarks() {
+    List<Bookmark> expectedBookmarks = List.of(
             Bookmark.builder().id(1L).title("Test1").url("http://test1.com").build(),
             Bookmark.builder().id(2L).title("Test2").url("http://test2.com").build()
     );
 
     when(bookmarkRepository.findAll()).thenReturn(expectedBookmarks);
+
     List<Bookmark> actualBookmarks = bookmarkService.fetchAllBookmarks();
+
     assertEquals(expectedBookmarks, actualBookmarks);
-    verify(bookmarkRepository).findAll();
+    verify(bookmarkRepository, times(1)).findAll();
   }
 
   @Test
-  public void fetchBookmarkById() {
+  void testFetchBookmarkById_Success() {
     Long bookmarkId = 1L;
     Bookmark expectedBookmark = Bookmark.builder()
             .id(bookmarkId)
             .title("Test Bookmark")
             .url("http://test.com")
             .build();
-    BookmarkRepository bookmarkRepository = mock(BookmarkRepository.class);
+
     when(bookmarkRepository.findById(bookmarkId)).thenReturn(Optional.of(expectedBookmark));
-    BookmarkServiceImpl bookmarkService = new BookmarkServiceImpl();
-    ReflectionTestUtils.setField(bookmarkService, "bookmarkRepository", bookmarkRepository);
+
     Bookmark actualBookmark = bookmarkService.fetchBookmarkById(bookmarkId);
+
     assertNotNull(actualBookmark);
-    assertEquals(expectedBookmark.getId(), actualBookmark.getId());
-    assertEquals(expectedBookmark.getTitle(), actualBookmark.getTitle());
-    assertEquals(expectedBookmark.getUrl(), actualBookmark.getUrl());
-    verify(bookmarkRepository).findById(bookmarkId);
+    assertEquals(expectedBookmark, actualBookmark);
+    verify(bookmarkRepository, times(1)).findById(bookmarkId);
   }
 
   @Test
-  public void deleteExistingBookmarkByValid_id() {
+  void testFetchBookmarkById_NotFound() {
     Long bookmarkId = 1L;
-    BookmarkRepository bookmarkRepository = mock(BookmarkRepository.class);
-    BookmarkServiceImpl bookmarkService = new BookmarkServiceImpl();
-    ReflectionTestUtils.setField(bookmarkService, "bookmarkRepository", bookmarkRepository);
 
-    bookmarkService.deleteBookmarkById(bookmarkId);
+    when(bookmarkRepository.findById(bookmarkId)).thenReturn(Optional.empty());
+
+    assertThrows(RuntimeException.class, () -> bookmarkService.fetchBookmarkById(bookmarkId));
+    verify(bookmarkRepository, times(1)).findById(bookmarkId);
+  }
+
+  @Test
+  void testDeleteBookmarkById() {
+    Long bookmarkId = 1L;
+
+    doNothing().when(bookmarkRepository).deleteById(bookmarkId);
+
+    assertDoesNotThrow(() -> bookmarkService.deleteBookmarkById(bookmarkId));
 
     verify(bookmarkRepository, times(1)).deleteById(bookmarkId);
   }
-
 }

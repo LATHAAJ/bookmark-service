@@ -8,7 +8,6 @@ import com.anywhereworks.bookmark.repository.BookmarkRepository;
 import com.anywhereworks.bookmark.service.BookmarkService;
 import com.anywhereworks.bookmark.service.FolderService;
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,13 +15,16 @@ import java.util.List;
 @Service
 public class BookmarkServiceImpl implements BookmarkService {
 
-  @Autowired
-  private BookmarkRepository bookmarkRepository;
-  @Autowired
-  private FolderService folderService;
-  @Autowired
-  private BookmarkMapper bookmarkMapper;
+  private final BookmarkRepository bookmarkRepository;
+  private final FolderService folderService;
+  private final BookmarkMapper bookmarkMapper;
 
+  // Constructor-based Dependency Injection
+  public BookmarkServiceImpl(BookmarkRepository bookmarkRepository, FolderService folderService, BookmarkMapper bookmarkMapper) {
+    this.bookmarkRepository = bookmarkRepository;
+    this.folderService = folderService;
+    this.bookmarkMapper = bookmarkMapper;
+  }
   @Override
   public List<Bookmark> fetchAllBookmarks() {
     return bookmarkRepository.findAll();

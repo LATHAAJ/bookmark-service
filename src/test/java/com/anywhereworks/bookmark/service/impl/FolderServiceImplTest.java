@@ -4,33 +4,51 @@ import com.anywhereworks.bookmark.dto.FolderDto;
 import com.anywhereworks.bookmark.entity.Folder;
 import com.anywhereworks.bookmark.mapper.FolderMapper;
 import com.anywhereworks.bookmark.repository.FolderRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.test.util.ReflectionTestUtils;
-import java.util.Arrays;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 public class FolderServiceImplTest {
-  @Test
-  public void fetchAll_folderslist() {
-    FolderServiceImpl folderService = new FolderServiceImpl();
-    FolderRepository folderRepository = mock(FolderRepository.class);
-    ReflectionTestUtils.setField(folderService, "folderRepository", folderRepository);
 
-    List<Folder> expectedFolders = Arrays.asList(
+  private FolderServiceImpl folderService;
+
+  @Mock
+  private FolderRepository folderRepository;
+
+  @Mock
+  private FolderMapper folderMapper;
+
+  @BeforeEach
+  void setUp() {
+    folderService = new FolderServiceImpl(folderRepository, folderMapper);
+  }
+
+  @Test
+  void testFetchAllFolders() {
+    List<Folder> expectedFolders = List.of(
             Folder.builder().id("1").name("Folder1").build(),
             Folder.builder().id("2").name("Folder2").build()
     );
+
     when(folderRepository.findAll()).thenReturn(expectedFolders);
+
     List<Folder> actualFolders = folderService.fetchAllFolders();
+
     assertEquals(expectedFolders, actualFolders);
+    verify(folderRepository, times(1)).findAll();
   }
+
   @Test
-  public void fetchFolderByValidId() {
+  void testFetchFolderByValidId() {
     Long folderId = 1L;
     Folder expectedFolder = Folder.builder()
             .id("1")
@@ -38,25 +56,27 @@ public class FolderServiceImplTest {
             .folderId("1")
             .build();
 
-    FolderServiceImpl folderService = new FolderServiceImpl();
-    FolderRepository folderRepository = mock(FolderRepository.class);
-    ReflectionTestUtils.setField(folderService, "folderRepository", folderRepository);
     when(folderRepository.findById(folderId)).thenReturn(Optional.of(expectedFolder));
-    Folder actualFolder = folderService.fetchFolderById(folderId);
-    assertNotNull(actualFolder);
-    assertEquals(expectedFolder.getId(), actualFolder.getId());
-    assertEquals(expectedFolder.getName(), actualFolder.getName());
-    assertEquals(expectedFolder.getFolderId(), actualFolder.getFolderId());
-  }
-  @Test
-  public void createFolderWithValid_dto() {
-    // Given
-    FolderServiceImpl folderService = new FolderServiceImpl();
-    FolderRepository folderRepository = mock(FolderRepository.class);
-    FolderMapper folderMapper = mock(FolderMapper.class);
-    ReflectionTestUtils.setField(folderService, "folderRepository", folderRepository);
-    ReflectionTestUtils.setField(folderService, "folderMapper", folderMapper);
 
+    Folder actualFolder = folderService.fetchFolderById(folderId);
+
+    assertNotNull(actualFolder);
+    assertEquals(expectedFolder, actualFolder);
+    verify(folderRepository, times(1)).findById(folderId);
+  }
+
+  @Test
+  void testFetchFolderById_NotFound() {
+    Long folderId = 1L;
+
+    when(folderRepository.findById(folderId)).thenReturn(Optional.empty());
+
+    assertThrows(RuntimeException.class, () -> folderService.fetchFolderById(folderId));
+    verify(folderRepository, times(1)).findById(folderId);
+  }
+
+  @Test
+  void testCreateFolder() {
     FolderDto folderDto = FolderDto.builder()
             .name("Test Folder")
             .folderId("folder123")
@@ -72,28 +92,22 @@ public class FolderServiceImplTest {
     when(folderRepository.save(expectedFolder)).thenReturn(expectedFolder);
 
     Folder actualFolder = folderService.createFolder(folderDto);
+
     assertEquals(expectedFolder, actualFolder);
+    verify(folderRepository, times(1)).save(expectedFolder);
   }
 
   @Test
-  public void deleteExisting_Folder() {
+  void testDeleteExistingFolder() {
     Long folderId = 1L;
     Folder mockFolder = new Folder();
-
-    FolderServiceImpl folderService = new FolderServiceImpl();
-    FolderRepository folderRepository = mock(FolderRepository.class);
-    ReflectionTestUtils.setField(folderService, "folderRepository", folderRepository);
 
     when(folderRepository.findById(folderId)).thenReturn(Optional.of(mockFolder));
     doNothing().when(folderRepository).delete(mockFolder);
 
-    // When
-    folderService.deleteFolderById(folderId);
+    assertDoesNotThrow(() -> folderService.deleteFolderById(folderId));
 
-    // Then
-    verify(folderRepository).findById(folderId);
-    verify(folderRepository).delete(mockFolder);
+    verify(folderRepository, times(1)).findById(folderId);
+    verify(folderRepository, times(1)).delete(mockFolder);
   }
-
-
 }

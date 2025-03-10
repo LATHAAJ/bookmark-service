@@ -6,17 +6,20 @@ import com.anywhereworks.bookmark.mapper.FolderMapper;
 import com.anywhereworks.bookmark.repository.FolderRepository;
 import com.anywhereworks.bookmark.service.FolderService;
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class FolderServiceImpl implements FolderService {
 
-  @Autowired
-  private FolderRepository folderRepository;
+  private final FolderRepository folderRepository;
+  private final FolderMapper folderMapper;
 
-  @Autowired
-  private FolderMapper folderMapper;
+  public FolderServiceImpl(FolderRepository folderRepository, FolderMapper folderMapper) {
+    this.folderRepository = folderRepository;
+    this.folderMapper = folderMapper;
+  }
 
   @Override
   public List<Folder> fetchAllFolders() {
@@ -25,7 +28,8 @@ public class FolderServiceImpl implements FolderService {
 
   @Override
   public Folder fetchFolderById(Long folderId) {
-    return folderRepository.findById(folderId).orElseThrow(() -> new EntityNotFoundException("Folder not found with id: " + folderId));
+    return folderRepository.findById(folderId)
+            .orElseThrow(() -> new EntityNotFoundException("Folder not found with id: " + folderId));
   }
 
   @Override

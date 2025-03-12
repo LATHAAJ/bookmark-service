@@ -1,6 +1,5 @@
 package com.anywhereworks.bookmark.controller;
 
-import com.anywhereworks.bookmark.dto.BookmarkDto;
 import com.anywhereworks.bookmark.dto.FolderDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/v1/folders")
+@RequestMapping("/folders")
 public class FolderController {
 
   @PostMapping("/add-folder")

@@ -1,6 +1,8 @@
 package com.anywhereworks.bookmark.controller;
 
 import com.anywhereworks.bookmark.dto.FolderDto;
+import com.anywhereworks.bookmark.entity.Folder;
+import com.anywhereworks.bookmark.service.impl.FolderServiceImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,23 +13,29 @@ import java.util.List;
 @RequestMapping("/folders")
 public class FolderController {
 
-  @PostMapping("/add-folder")
-  public ResponseEntity<FolderDto> createFolder(FolderDto folderDto) {
-    return ResponseEntity.status(HttpStatus.CREATED).body(folderDto);
-  }
+  private FolderServiceImpl folderService;
 
+    public FolderController(FolderServiceImpl folderService) {
+        this.folderService = folderService;
+    }
+
+  @PostMapping("/add-folder")
+  public ResponseEntity<Folder> createFolder(FolderDto folderDto) {
+    return ResponseEntity.status(HttpStatus.CREATED).body(folderService.createFolder(folderDto));
+  }
   @GetMapping
-  public ResponseEntity<List<FolderDto>> getFolder() {
-    return ResponseEntity.ok(List.of());
+  public ResponseEntity<List<Folder>> getFolder() {
+    return ResponseEntity.ok(folderService.fetchAllFolders());
   }
 
   @PutMapping("/update-folder")
-  public ResponseEntity<FolderDto> updateFolder(@RequestBody FolderDto folderDto) {
-    return ResponseEntity.ok(folderDto);
+  public ResponseEntity<Folder> updateFolder(@RequestBody FolderDto folderDto, @PathVariable Long folderId) {
+    return ResponseEntity.ok(folderService.updateFolder(folderDto, folderId));
   }
 
   @DeleteMapping("/delete-folder/{folderId}")
   public ResponseEntity<Void> deleteFolder(@PathVariable String folderId) {
+    folderService.deleteFolderById(Long.parseLong(folderId));
     return ResponseEntity.noContent().build();
   }
 

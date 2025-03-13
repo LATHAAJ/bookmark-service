@@ -27,7 +27,7 @@ public class BookmarkServiceImplTest {
 
   @BeforeEach
   void setUp() {
-    bookmarkService = new BookmarkServiceImpl(bookmarkRepository, null, bookmarkMapper);
+    bookmarkService = new BookmarkServiceImpl(bookmarkRepository, null, bookmarkMapper,null);
   }
 
   @Test

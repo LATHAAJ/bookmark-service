@@ -8,8 +8,11 @@ import com.anywhereworks.bookmark.repository.BookmarkRepository;
 import com.anywhereworks.bookmark.service.BookmarkService;
 import com.anywhereworks.bookmark.service.FolderService;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -19,15 +22,16 @@ public class BookmarkServiceImpl implements BookmarkService {
   private final FolderService folderService;
   private final BookmarkMapper bookmarkMapper;
 
-  // Constructor-based Dependency Injection
-  public BookmarkServiceImpl(BookmarkRepository bookmarkRepository, FolderService folderService, BookmarkMapper bookmarkMapper) {
+  private final BookmarkSpecification bookmarkSpecification;
+
+  public BookmarkServiceImpl(BookmarkRepository bookmarkRepository, FolderService folderService, BookmarkMapper bookmarkMapper, BookmarkSpecification bookmarkSpecification) {
     this.bookmarkRepository = bookmarkRepository;
     this.folderService = folderService;
     this.bookmarkMapper = bookmarkMapper;
+    this.bookmarkSpecification= bookmarkSpecification;
   }
-  @Override
-  public List<Bookmark> fetchAllBookmarks() {
-    return bookmarkRepository.findAll();
+  public Page<Bookmark> fetchAllBookmarks(String title, String description, LocalDate fromDate, LocalDate toDate, Pageable pageable) {
+    return bookmarkRepository.findAll(bookmarkSpecification.filterBy(title, description, fromDate, toDate), pageable);
   }
 
   @Override
@@ -60,5 +64,8 @@ public class BookmarkServiceImpl implements BookmarkService {
   public void deleteBookmarkById(Long bookmarkId) {
     bookmarkRepository.deleteById(bookmarkId);
   }
-
+  @Override
+  public List<Bookmark> fetchAllBookmarks() {
+    return bookmarkRepository.findAll();
+  }
 }

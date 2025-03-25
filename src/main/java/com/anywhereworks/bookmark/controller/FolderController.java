@@ -19,7 +19,7 @@ public class FolderController {
         this.folderService = folderService;
     }
 
-  @PostMapping("/add-folder")
+  @PostMapping
   public ResponseEntity<Folder> createFolder(FolderDto folderDto) {
     return ResponseEntity.status(HttpStatus.CREATED).body(folderService.createFolder(folderDto));
   }
@@ -28,12 +28,12 @@ public class FolderController {
     return ResponseEntity.ok(folderService.fetchAllFolders());
   }
 
-  @PutMapping("/update-folder")
+  @PutMapping("/folderId")
   public ResponseEntity<Folder> updateFolder(@RequestBody FolderDto folderDto, @PathVariable Long folderId) {
     return ResponseEntity.ok(folderService.updateFolder(folderDto, folderId));
   }
 
-  @DeleteMapping("/delete-folder/{folderId}")
+  @DeleteMapping("/{folderId}")
   public ResponseEntity<Void> deleteFolder(@PathVariable String folderId) {
     folderService.deleteFolderById(Long.parseLong(folderId));
     return ResponseEntity.noContent().build();

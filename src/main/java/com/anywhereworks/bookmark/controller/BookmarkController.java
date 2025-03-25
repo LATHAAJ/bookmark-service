@@ -3,8 +3,11 @@ package com.anywhereworks.bookmark.controller;
 import com.anywhereworks.bookmark.dto.BookmarkDto;
 import com.anywhereworks.bookmark.entity.Bookmark;
 import com.anywhereworks.bookmark.service.impl.BookmarkServiceImpl;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,14 +15,11 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/v1/bookmarks")
 public class BookmarkController {
 
-  private BookmarkServiceImpl bookmarkService;
-
-  public BookmarkController(BookmarkServiceImpl bookmarkService) {
-    this.bookmarkService = bookmarkService;
-  }
+  private final BookmarkServiceImpl bookmarkService;
 
   @PostMapping
   public ResponseEntity<Bookmark> createBookmark(BookmarkDto bookmarkDto) {
@@ -42,8 +42,7 @@ public class BookmarkController {
                                                         @RequestParam(required = false) String description,
                                                         @RequestParam(required = false) LocalDate fromDate,
                                                         @RequestParam(required = false) LocalDate toDate,
-                                                        @RequestParam(required = false) Pageable pag) {
+                                                        @PageableDefault(page = 0, size = 10, sort = "title", direction = Sort.Direction.ASC) Pageable pag) {
     return ResponseEntity.ok(bookmarkService.fetchAllBookmarks(title, description, fromDate, toDate, pag));
   }
-
 }

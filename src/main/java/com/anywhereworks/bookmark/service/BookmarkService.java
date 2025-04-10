@@ -2,13 +2,14 @@ package com.anywhereworks.bookmark.service;
 
 import com.anywhereworks.bookmark.dto.BookmarkDto;
 import com.anywhereworks.bookmark.entity.Bookmark;
-import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
-import java.util.List;
-@Service
+import java.time.LocalDate;
+
 public interface BookmarkService {
 
-  List<Bookmark> fetchAllBookmarks();
+  Page<Bookmark> fetchAllBookmarks(String title, String description, LocalDate fromDate, LocalDate toDate, Pageable pageable);
 
   Bookmark fetchBookmarkById(Long bookmarkId);
 

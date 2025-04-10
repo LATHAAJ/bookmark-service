@@ -2,7 +2,7 @@ package com.anywhereworks.bookmark.controller;
 
 import com.anywhereworks.bookmark.dto.BookmarkDto;
 import com.anywhereworks.bookmark.entity.Bookmark;
-import com.anywhereworks.bookmark.service.impl.BookmarkServiceImpl;
+import com.anywhereworks.bookmark.service.BookmarkService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,7 +19,7 @@ import java.time.LocalDate;
 @RequestMapping("/v1/bookmarks")
 public class BookmarkController {
 
-  private final BookmarkServiceImpl bookmarkService;
+  private final BookmarkService bookmarkService;
 
   @PostMapping
   public ResponseEntity<Bookmark> createBookmark(BookmarkDto bookmarkDto) {

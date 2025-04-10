@@ -1,13 +1,17 @@
 package com.anywhereworks.bookmark.service.impl;
 
 import com.anywhereworks.bookmark.entity.Bookmark;
-import com.anywhereworks.bookmark.mapper.BookmarkMapper;
 import com.anywhereworks.bookmark.repository.BookmarkRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -17,32 +21,34 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 public class BookmarkServiceImplTest {
 
-  private BookmarkServiceImpl bookmarkService;
-
   @Mock
   private BookmarkRepository bookmarkRepository;
 
   @Mock
-  private BookmarkMapper bookmarkMapper;
+  private BookmarkSpecification bookmarkSpecification;
 
-  @BeforeEach
-  void setUp() {
-    bookmarkService = new BookmarkServiceImpl(bookmarkRepository, null, bookmarkMapper,null);
-  }
+  @InjectMocks
+  private BookmarkServiceImpl bookmarkService;
 
   @Test
   void testFetchAllBookmarks() {
-    List<Bookmark> expectedBookmarks = List.of(
+    List<Bookmark> bookmarkList = List.of(
             Bookmark.builder().id(1L).title("Test1").url("http://test1.com").build(),
             Bookmark.builder().id(2L).title("Test2").url("http://test2.com").build()
     );
 
-    when(bookmarkRepository.findAll()).thenReturn(expectedBookmarks);
+    Pageable pageable = Pageable.unpaged();
+    Specification<Bookmark> mockSpec = (root, query, cb) -> cb.conjunction();
 
-    List<Bookmark> actualBookmarks = bookmarkService.fetchAllBookmarks();
+    when(bookmarkSpecification.filterBy("", "", null, null)).thenReturn(mockSpec);
 
-    assertEquals(expectedBookmarks, actualBookmarks);
-    verify(bookmarkRepository, times(1)).findAll();
+    Page<Bookmark> expectedPage = new PageImpl<>(bookmarkList);
+    when(bookmarkRepository.findAll(mockSpec, pageable)).thenReturn(expectedPage);
+
+    Page<Bookmark> result = bookmarkService.fetchAllBookmarks("", "", null, null, pageable);
+
+    assertEquals(expectedPage, result);
+    verify(bookmarkRepository, times(1)).findAll(mockSpec, pageable);
   }
 
   @Test

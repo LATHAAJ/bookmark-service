@@ -11,9 +11,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDate;
-import java.util.List;
 
 @Service
 public class BookmarkServiceImpl implements BookmarkService {
@@ -63,9 +61,5 @@ public class BookmarkServiceImpl implements BookmarkService {
   @Override
   public void deleteBookmarkById(Long bookmarkId) {
     bookmarkRepository.deleteById(bookmarkId);
-  }
-  @Override
-  public List<Bookmark> fetchAllBookmarks() {
-    return bookmarkRepository.findAll();
   }
 }

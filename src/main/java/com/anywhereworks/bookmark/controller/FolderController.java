@@ -27,7 +27,7 @@ public class FolderController {
     return ResponseEntity.ok(folderService.fetchAllFolders());
   }
 
-  @PutMapping("/folderId")
+  @PutMapping("/{folderId}")
   public ResponseEntity<Folder> updateFolder(@RequestBody FolderDto folderDto, @PathVariable Long folderId) {
     return ResponseEntity.ok(folderService.updateFolder(folderDto, folderId));
   }
